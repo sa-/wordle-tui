@@ -58,11 +58,11 @@
 Output demo.gif
 
 Set Shell "bash"
-Set FontSize 32
-Set Width 800
-Set Height 800
+Set FontSize 14
+Set Width 400
+Set Height 500
 
-Type "go run main.go" Enter
+Type "wordle" Enter
 Sleep 1
 Type "sweat" Sleep 1 Enter
 Enter Sleep 1
