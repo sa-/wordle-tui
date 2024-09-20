@@ -20,4 +20,6 @@ go.work.sum
 # env file
 .env
 
-./**/.DS_Store
+out/
+
+**/.DS_Store
