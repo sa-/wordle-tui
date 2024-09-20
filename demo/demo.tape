@@ -62,7 +62,7 @@ Set FontSize 14
 Set Width 400
 Set Height 500
 
-Type "wordle" Enter
+Type "wordle" Sleep 500ms Enter
 Sleep 1
 Type "sweat" Sleep 1 Enter
 Enter Sleep 1
