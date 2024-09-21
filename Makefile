@@ -5,7 +5,7 @@ demo:
 
 .PHONY: build
 build:
-	go build -o out/wordle
+	go build -ldflags "-s -w" -o out/wordle
 
 .PHONY: run
 run: build
