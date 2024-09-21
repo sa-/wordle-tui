@@ -115,19 +115,19 @@ func (m model) View() string {
 		s.WriteString("\n")
 	}
 
-	s.WriteString("\n")
-
 	if !m.gameOver {
+		s.WriteString("\n")
 		s.WriteString(m.input.View())
+		s.WriteString("\n")
 	} else {
 		if m.win {
+			s.WriteString("\n")
 			s.WriteString("🎊 Congratulations 🎊")
+			s.WriteString("\n")
 		} else {
-			s.WriteString(fmt.Sprintf("Game over! The word was:\n%s", m.word))
+			s.WriteString(fmt.Sprintf("Game over!\nThe word was:\n%s", m.word))
 		}
 	}
-
-	s.WriteString("\n")
 
 	letters := "Q W E R T Y U I O P\n A S D F G H J K L \n   Z X C V B N M   "
 	lettersColored := strings.Builder{}
@@ -148,7 +148,7 @@ func (m model) View() string {
 			lettersColored.WriteRune(ch)
 		}
 	}
-	letters = lipgloss.NewStyle().Bold(true).Align(lipgloss.Center).Render(lettersColored.String())
+	letters = lipgloss.NewStyle().Bold(true).Border(lipgloss.NormalBorder()).PaddingLeft(1).PaddingRight(1).Align(lipgloss.Center).Render(lettersColored.String())
 
 	style := lipgloss.NewStyle().Width(m.windowWidth).Height(m.windowHeight).AlignVertical(lipgloss.Center).Align(lipgloss.Center)
 	content := lipgloss.JoinVertical(lipgloss.Center, title, s.String(), letters)
