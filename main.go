@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"unicode"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -21,14 +22,22 @@ var (
 	emptyStyle    = lipgloss.NewStyle().Width(15)
 )
 
+const (
+	LetterStatusUnguessed = iota
+	LetterStatusGreen
+	LetterStatusYellow
+	LetterStatusWrong
+)
+
 type model struct {
-	word         string
-	guesses      []string
-	input        textinput.Model
-	gameOver     bool
-	win          bool
-	windowWidth  int
-	windowHeight int
+	word           string
+	guesses        []string
+	input          textinput.Model
+	gameOver       bool
+	win            bool
+	windowWidth    int
+	windowHeight   int
+	guessedLetters map[rune]int
 }
 
 func initialModel() model {
@@ -36,13 +45,14 @@ func initialModel() model {
 	ti.Placeholder = "guess"
 	ti.Focus()
 	ti.CharLimit = 5
-	ti.Width = 20
+	ti.Width = 5
 
 	return model{
-		word:        words[rand.Intn(len(words))],
-		guesses:     make([]string, 0),
-		input:       ti,
-		windowWidth: 20,
+		word:           words[rand.Intn(len(words))],
+		guesses:        make([]string, 0),
+		input:          ti,
+		windowWidth:    20,
+		guessedLetters: make(map[rune]int),
 	}
 }
 
@@ -63,7 +73,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case tea.KeyEnter:
 			if len(m.input.Value()) == 5 {
-				m.guesses = append(m.guesses, strings.ToUpper(m.input.Value()))
+				currentGuess := strings.ToUpper(m.input.Value())
+
+				// process the guess
+				for i, ch := range currentGuess {
+					if ch == rune(m.word[i]) {
+						m.guessedLetters[ch] = LetterStatusGreen
+					} else if strings.ContainsRune(m.word, ch) {
+						m.guessedLetters[ch] = LetterStatusYellow
+					}
+				}
+				m.guesses = append(m.guesses, currentGuess)
+				//
+
 				m.input.SetValue("")
 				if m.guesses[len(m.guesses)-1] == m.word {
 					m.gameOver = true
@@ -74,19 +96,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 	}
-
-	m.input, cmd = m.input.Update(msg)
+	if !m.gameOver {
+		m.input, cmd = m.input.Update(msg)
+	}
 	return m, cmd
 }
 
 func (m model) View() string {
-
-	title := lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Width(15).PaddingLeft(1).PaddingRight(1).Border(lipgloss.NormalBorder()).Render("Wordle")
+	title := lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Width(15).PaddingLeft(1).PaddingRight(1).Border(lipgloss.NormalBorder()).Render("5char")
 
 	s := strings.Builder{}
 	for i := 0; i < 6; i++ {
 		if i < len(m.guesses) {
-			s.WriteString(renderGuess(m.guesses[i], m.word))
+			s.WriteString(renderGuess(m.guesses[i], m))
 		} else {
 			s.WriteString(renderEmptyRow())
 		}
@@ -94,32 +116,60 @@ func (m model) View() string {
 	}
 
 	s.WriteString("\n")
-	s.WriteString(m.input.View())
-	s.WriteString("\n\n")
 
-	letters := "\nQ W E R T Y U I O P\n A S D F G H J K L\nZ X C V B N M"
-	letters = lipgloss.NewStyle().Bold(true).Align(lipgloss.Left).Render(letters)
-
-	if m.gameOver {
+	if !m.gameOver {
+		s.WriteString(m.input.View())
+	} else {
 		if m.win {
-			s.WriteString("\n\nCongratulations! You guessed the word!")
+			s.WriteString("🎊 Congratulations 🎊")
 		} else {
-			s.WriteString(fmt.Sprintf("Game over! The word was: %s", m.word))
+			s.WriteString(fmt.Sprintf("Game over! The word was:\n%s", m.word))
 		}
 	}
+
+	s.WriteString("\n")
+
+	letters := "Q W E R T Y U I O P\n A S D F G H J K L \n   Z X C V B N M   "
+	lettersColored := strings.Builder{}
+	for _, ch := range letters {
+		if unicode.IsLetter(ch) {
+			letterStatus := m.guessedLetters[ch]
+			switch letterStatus {
+			case LetterStatusUnguessed:
+				lettersColored.WriteRune(ch)
+			case LetterStatusGreen:
+				lettersColored.WriteString(correctStyle.Render(string(ch)))
+			case LetterStatusYellow:
+				lettersColored.WriteString(wrongPosStyle.Render(string(ch)))
+			case LetterStatusWrong:
+				lettersColored.WriteString(wrongStyle.Render(string(ch)))
+			}
+		} else {
+			lettersColored.WriteRune(ch)
+		}
+	}
+	letters = lipgloss.NewStyle().Bold(true).Align(lipgloss.Center).Render(lettersColored.String())
 
 	style := lipgloss.NewStyle().Width(m.windowWidth).Height(m.windowHeight).AlignVertical(lipgloss.Center).Align(lipgloss.Center)
 	content := lipgloss.JoinVertical(lipgloss.Center, title, s.String(), letters)
 	return style.Render(content)
 }
 
-func renderGuess(guess, word string) string {
+func renderGuess(guess string, m model) string {
 	s := make([]string, 5)
 	for i, ch := range guess {
+		letterStatus := LetterStatusWrong
+		if ch == rune(m.word[i]) {
+			letterStatus = LetterStatusGreen
+		} else if strings.ContainsRune(m.word, ch) {
+			letterStatus = LetterStatusYellow
+		}
+
 		style := wrongStyle
-		if ch == rune(word[i]) {
+		switch letterStatus {
+		case LetterStatusGreen:
 			style = correctStyle
-		} else if strings.ContainsRune(word, ch) {
+		case LetterStatusYellow:
 			style = wrongPosStyle
 		}
 		s[i] = style.Render(fmt.Sprintf(" %c ", ch))
