@@ -8,7 +8,7 @@ build:
 
 .PHONY: run
 run: build
-	./out/wordle
+	./out/wordle-tui
 
 .PHONY: clean
 clean:

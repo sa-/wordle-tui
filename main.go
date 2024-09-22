@@ -155,11 +155,11 @@ func (m model) View() string {
 			letterStatus := m.guessedLetters[ch]
 			switch letterStatus {
 			case LetterStatusUnguessed:
-				lettersColored.WriteString(lipgloss.NewStyle().Bold(true).Render(string(ch)))
+				lettersColored.WriteString(lipgloss.NewStyle().Render(string(ch)))
 			case LetterStatusGreen:
-				lettersColored.WriteString(correctStyle.Bold(true).Render(string(ch)))
+				lettersColored.WriteString(correctStyle.Render(string(ch)))
 			case LetterStatusYellow:
-				lettersColored.WriteString(wrongPosStyle.Bold(true).Render(string(ch)))
+				lettersColored.WriteString(wrongPosStyle.Render(string(ch)))
 			case LetterStatusWrong:
 				lettersColored.WriteString(wrongStyle.Foreground(lipgloss.Color("#ccc")).Render(string(ch)))
 			}
