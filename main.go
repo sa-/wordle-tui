@@ -81,6 +81,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 						m.guessedLetters[ch] = LetterStatusGreen
 					} else if strings.ContainsRune(m.word, ch) {
 						m.guessedLetters[ch] = LetterStatusYellow
+					} else {
+						m.guessedLetters[ch] = LetterStatusWrong
 					}
 				}
 				m.guesses = append(m.guesses, currentGuess)
@@ -103,7 +105,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	title := lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Width(15).PaddingLeft(1).PaddingRight(1).Border(lipgloss.NormalBorder()).Render("5char")
+	title := lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Width(21).PaddingLeft(1).PaddingRight(1).Border(lipgloss.NormalBorder()).Render("WORDL")
 
 	s := strings.Builder{}
 	for i := 0; i < 6; i++ {
