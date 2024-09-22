@@ -138,19 +138,19 @@ func (m model) View() string {
 			letterStatus := m.guessedLetters[ch]
 			switch letterStatus {
 			case LetterStatusUnguessed:
-				lettersColored.WriteRune(ch)
+				lettersColored.WriteString(lipgloss.NewStyle().Bold(true).Render(string(ch)))
 			case LetterStatusGreen:
-				lettersColored.WriteString(correctStyle.Render(string(ch)))
+				lettersColored.WriteString(correctStyle.Bold(true).Render(string(ch)))
 			case LetterStatusYellow:
-				lettersColored.WriteString(wrongPosStyle.Render(string(ch)))
+				lettersColored.WriteString(wrongPosStyle.Bold(true).Render(string(ch)))
 			case LetterStatusWrong:
-				lettersColored.WriteString(wrongStyle.Render(string(ch)))
+				lettersColored.WriteString(wrongStyle.Bold(true).Render(string(ch)))
 			}
 		} else {
 			lettersColored.WriteRune(ch)
 		}
 	}
-	letters = lipgloss.NewStyle().Bold(true).Border(lipgloss.NormalBorder()).PaddingLeft(1).PaddingRight(1).Align(lipgloss.Center).Render(lettersColored.String())
+	letters = lipgloss.NewStyle().Border(lipgloss.NormalBorder()).PaddingLeft(1).PaddingRight(1).Align(lipgloss.Center).Render(lettersColored.String())
 
 	style := lipgloss.NewStyle().Width(m.windowWidth).Height(m.windowHeight).AlignVertical(lipgloss.Center).Align(lipgloss.Center)
 	content := lipgloss.JoinVertical(lipgloss.Center, title, s.String(), letters)
