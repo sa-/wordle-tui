@@ -3,21 +3,20 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"os"
 	"strings"
 	"unicode"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+
+	words "github.com/sa-/wordle-tui/words"
 )
 
 var (
-	words = []string{
-		"WORLD", "GLOBE", "EARTH", "OCEAN", "RIVER",
-	}
-
-	correctStyle  = lipgloss.NewStyle().Background(lipgloss.Color("#3a3")).Foreground(lipgloss.Color("#fff"))
-	wrongPosStyle = lipgloss.NewStyle().Background(lipgloss.Color("#aa3")).Foreground(lipgloss.Color("#fff"))
+	correctStyle  = lipgloss.NewStyle().Background(lipgloss.Color("#40a02b")).Foreground(lipgloss.Color("#fff"))
+	wrongPosStyle = lipgloss.NewStyle().Background(lipgloss.Color("#df8e1d")).Foreground(lipgloss.Color("#fff"))
 	wrongStyle    = lipgloss.NewStyle().Background(lipgloss.Color("#777")).Foreground(lipgloss.Color("#fff"))
 	emptyStyle    = lipgloss.NewStyle().Width(15)
 )
@@ -47,8 +46,14 @@ func initialModel() model {
 	ti.CharLimit = 5
 	ti.Width = 5
 
+	wordToGuess := os.Getenv("WORDLE_WORD")
+	if len(wordToGuess) == 0 {
+		wordToGuess = words.AnswerWords[rand.Intn(len(words.AnswerWords))]
+	}
+	wordToGuess = strings.ToUpper(wordToGuess)
+
 	return model{
-		word:           words[rand.Intn(len(words))],
+		word:           wordToGuess,
 		guesses:        make([]string, 0),
 		input:          ti,
 		windowWidth:    20,
@@ -74,6 +79,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyEnter:
 			if len(m.input.Value()) == 5 {
 				currentGuess := strings.ToUpper(m.input.Value())
+
+				if !words.IsValidGuess(currentGuess) {
+					return m, cmd
+				}
 
 				// process the guess
 				for i, ch := range currentGuess {
@@ -105,7 +114,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	title := lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Width(21).PaddingLeft(1).PaddingRight(1).Border(lipgloss.NormalBorder()).Render("WORDL")
+	title := lipgloss.NewStyle().AlignHorizontal(lipgloss.Center).Height(2).Width(21).Render("WORDLE!")
 
 	s := strings.Builder{}
 	for i := 0; i < 6; i++ {
@@ -124,7 +133,7 @@ func (m model) View() string {
 	} else {
 		if m.win {
 			s.WriteString("\n")
-			s.WriteString("🎊 Congratulations 🎊")
+			s.WriteString("🎊 Congratulations 😎")
 			s.WriteString("\n")
 		} else {
 			s.WriteString(fmt.Sprintf("Game over!\nThe word was:\n%s", m.word))
@@ -144,7 +153,7 @@ func (m model) View() string {
 			case LetterStatusYellow:
 				lettersColored.WriteString(wrongPosStyle.Bold(true).Render(string(ch)))
 			case LetterStatusWrong:
-				lettersColored.WriteString(wrongStyle.Bold(true).Render(string(ch)))
+				lettersColored.WriteString(wrongStyle.Foreground(lipgloss.Color("#ccc")).Render(string(ch)))
 			}
 		} else {
 			lettersColored.WriteRune(ch)
