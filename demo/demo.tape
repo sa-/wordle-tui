@@ -62,9 +62,15 @@ Set FontSize 14
 Set Width 400
 Set Height 500
 
-Type "wordle" Sleep 500ms Enter
+Type "wordle-tui" Sleep 500ms Enter
 Sleep 1
+Type "moist" Sleep 1 Enter
+Enter Sleep 1
 Type "sweat" Sleep 1 Enter
 Enter Sleep 1
-Type "moist" Sleep 1
-Enter Sleep 3
+Type "blame" Sleep 1 Enter
+Enter Sleep 1
+Type "prank" Sleep 1 Enter
+Enter Sleep 1
+Type "charm" Sleep 1
+Enter Sleep 5

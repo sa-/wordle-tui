@@ -1,11 +1,10 @@
 .PHONY: demo
-demo:
-	go build -o out/wordle
-	PATH="$$(pwd)/out:$$PATH" vhs demo/demo.tape -o demo/demo.gif
+demo: build
+	PATH="$$(pwd)/out:$$PATH" WORDLE_WORD=charm vhs demo/demo.tape -o demo/demo.gif
 
 .PHONY: build
 build:
-	go build -ldflags "-s -w" -o out/wordle
+	go build -ldflags "-s -w" -o out/wordle-tui
 
 .PHONY: run
 run: build

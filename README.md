@@ -1,6 +1,25 @@
 Wordle TUI
 ==========
 
-I really just need an excuse to learn bubbletea
+I really just need an excuse to learn bubbletea. GIF demo at the bottom.
+
+## Run
+
+### Using `go install`
+```
+go install -ldflags "-s -w" github.com/sa-/wordle-tui@latest
+# then you should be able to run
+wordle-tui
+```
+
+### Using git clone
+
+```
+git clone https://github.com/sa-/wordle-tui.git
+cd wordle-tui
+make run
+```
+
+## Demo
 
 ![image](./demo/demo.gif)
