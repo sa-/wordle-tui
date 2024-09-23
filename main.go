@@ -81,6 +81,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.cheats = !m.cheats
 			return m, cmd
 		case tea.KeyEnter:
+			if m.gameOver {
+				newModel := initialModel()
+				newModel.windowWidth = m.windowWidth
+				newModel.windowHeight = m.windowHeight
+				return newModel, cmd
+			}
 			if len(m.input.Value()) == 5 {
 				currentGuess := strings.ToUpper(m.input.Value())
 
