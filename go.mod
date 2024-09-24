@@ -1,11 +1,12 @@
 module github.com/sa-/wordle-tui
 
-go 1.22.0
+go 1.23.1
 
 require (
 	github.com/charmbracelet/bubbles v0.16.1
 	github.com/charmbracelet/bubbletea v1.1.1
 	github.com/charmbracelet/lipgloss v0.13.0
+	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0
 )
 
 require github.com/atotto/clipboard v0.1.4 // indirect
@@ -23,7 +24,6 @@ require (
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/termenv v0.15.2 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.12.0 // indirect

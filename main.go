@@ -99,7 +99,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					if ch == rune(m.word[i]) {
 						m.guessedLetters[ch] = LetterStatusGreen
 					} else if strings.ContainsRune(m.word, ch) {
-						m.guessedLetters[ch] = LetterStatusYellow
+						if m.guessedLetters[ch] != LetterStatusGreen {
+							m.guessedLetters[ch] = LetterStatusYellow
+						}
 					} else {
 						m.guessedLetters[ch] = LetterStatusWrong
 					}

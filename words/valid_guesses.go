@@ -8,7 +8,7 @@ import (
 
 func IsValidGuess(guess string) bool {
 	guessLower := strings.ToLower(guess)
-	return slices.Contains(validGuesses[:], guessLower)
+	return slices.Contains(validGuesses[:], guessLower) || slices.Contains(AnswerWords[:], guessLower)
 }
 
 var validGuesses = [...]string{
