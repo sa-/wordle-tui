@@ -17,7 +17,10 @@ wordle-tui
 ```sh
 git clone https://github.com/sa-/wordle-tui.git
 cd wordle-tui
-make run
+make install
+
+# then you should be able to run
+wordle-tui
 ```
 
 ## Demo

@@ -13,3 +13,7 @@ run: build
 .PHONY: clean
 clean:
 	rm -r out
+
+.PHONY: install
+install:
+	go install -ldflags "-s -w"
